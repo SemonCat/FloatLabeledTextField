@@ -15,8 +15,10 @@ import android.text.TextWatcher;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
 import android.util.AttributeSet;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 import android.view.inputmethod.EditorInfo;
@@ -35,9 +37,12 @@ import com.nineoldandroids.animation.ObjectAnimator;
 public class FloatLabeledEditText extends LinearLayout {
 
     private String hint;
+    private int gravity;
     private int inputType;
     private int imeOptions;
     private int imeActionId;
+    private int textLines;
+    private int textBackgroundId;
     private String imeActionLabel;
     private boolean singleLine;
     private boolean password;
@@ -76,6 +81,7 @@ public class FloatLabeledEditText extends LinearLayout {
         try {
 
 
+            gravity = a.getInt(R.styleable.FloatLabeledEditText_fletTextGravity, Gravity.LEFT);
             hint = a.getString(R.styleable.FloatLabeledEditText_fletFloatingHint);
             inputType = a.getInt(R.styleable.FloatLabeledEditText_fletInputType, EditorInfo.TYPE_NULL);
             imeOptions = a.getInt(R.styleable.FloatLabeledEditText_fletImeOptions, EditorInfo.IME_ACTION_DONE);
@@ -85,6 +91,9 @@ public class FloatLabeledEditText extends LinearLayout {
             password = a.getBoolean(R.styleable.FloatLabeledEditText_fletPassword, false);
             hintColor = a.getColorStateList(R.styleable.FloatLabeledEditText_fletHintTextColor);
             textColor = a.getColorStateList(R.styleable.FloatLabeledEditText_fletTextColor);
+            textLines = a.getInt(R.styleable.FloatLabeledEditText_fletTextLines, -1);
+            textBackgroundId = a.getResourceId(R.styleable.FloatLabeledEditText_fletTextBackground,-1);
+
         } finally {
             a.recycle();
         }
@@ -112,7 +121,18 @@ public class FloatLabeledEditText extends LinearLayout {
         if (imeActionId > -1 && !TextUtils.isEmpty(imeActionLabel)) {
             editText.setImeActionLabel(imeActionLabel, imeActionId);
         }
+        if (textLines != -1){
+            editText.setLines(textLines);
+        }
+
+        if (textBackgroundId!=-1){
+            LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)editText.getLayoutParams();
+            params.setMargins(0, 0, 0, 0); //substitute parameters for left, top, right, bottom
+            editText.setLayoutParams(params);
+            editText.setBackgroundResource(textBackgroundId);
+        }
         editText.setSingleLine(singleLine);
+        editText.setGravity(gravity);
         if (password){
             editText.setTransformationMethod(PasswordTransformationMethod.getInstance());
         }else{
@@ -331,6 +351,39 @@ public class FloatLabeledEditText extends LinearLayout {
         }else{
             editText.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
         }
+    }
+
+
+    /**
+     * @see android.view.Gravity
+     */
+    public void setGravity(int gravity){
+        editText.setGravity(gravity);
+    }
+
+    /**
+     * @see android.widget.TextView#setLines
+     */
+    public void setTextLines(int num){
+        editText.setLines(num);
+    }
+
+    /**
+     * @see android.widget.TextView#setBackground(android.graphics.drawable.Drawable)
+     */
+    public void setTextBackground(Drawable mDrawable){
+        if(android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+            editText.setBackgroundDrawable(mDrawable);
+        } else {
+            editText.setBackground(mDrawable);
+        }
+    }
+
+    /**
+     * @see android.widget.TextView#setBackgroundResource(int)
+     */
+    public void setTextBackgroundResource(int ResourceId){
+        editText.setBackgroundResource(ResourceId);
     }
 
     @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)

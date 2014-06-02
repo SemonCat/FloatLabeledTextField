@@ -40,5 +40,14 @@
         app:fletHintTextColor="#ff669900"
         app:fletFloatingHint="LabelColor"/>
 
+    <com.semoncat.FloatLabeledEditText
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        app:fletTextBackground="@drawable/border_text"
+        app:fletSingleLine="false"
+        app:fletTextLines="5"
+        app:fletFloatingHint="LabelCustom"/>
+
 
 </LinearLayout>
